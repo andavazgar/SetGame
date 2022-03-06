@@ -10,6 +10,7 @@ import Foundation
 struct SetGame {
     private var deck = [SetCard]()
     private(set) var cardsOnTable = [SetCard]()
+    private(set) var numberOfMatches = 0
     private var numberOfCardsDrawn = 0
     private let initialNumberOfCards = 12
     private var selectedCards: [SetCard] { cardsOnTable.filter { $0.isSelected } }
@@ -36,9 +37,10 @@ struct SetGame {
         numberOfCardsDrawn = initialNumberOfCards
     }
     
-    private mutating func matchCards() {
+    private func matchCards(_ setOfCards: [SetCard]) -> Bool {
+        guard setOfCards.count == 3 else { return false }
+        
         var isValidMatch = true
-        let setOfCards = selectedCards
         let valuesToCheck = [
             "numberOfSymbols": setOfCards.map { $0.numberOfSymbols },
             "shapes": setOfCards.map { $0.shape },
@@ -53,6 +55,13 @@ struct SetGame {
             isValidMatch = isValidMatch && setOfValues.count != 2
         }
         
+        return isValidMatch
+    }
+    
+    private mutating func matchSelectedCards() {
+        let setOfCards = selectedCards
+        let isValidMatch = matchCards(setOfCards)
+        
         // set isValidMatch property of the cards
         for index in cardsOnTable.indices {
             if setOfCards.contains(cardsOnTable[index]) {
@@ -65,9 +74,9 @@ struct SetGame {
         let matchedCards = matchedCards
         var newCards = draw3CardsFromDeck()
         
-        for index in cardsOnTable.indices {
+        for index in cardsOnTable.indices.reversed() {
             if matchedCards.contains(cardsOnTable[index]) {
-                if let newCard = newCards?.removeFirst() {
+                if let newCard = newCards?.removeFirst(), cardsOnTable.count == initialNumberOfCards {
                     cardsOnTable[index] = newCard
                 } else {
                     cardsOnTable.remove(at: index)
@@ -101,6 +110,7 @@ struct SetGame {
         if selectedCards.count == 3 {
             if selectedCards[0].isValidMatch == true {
                 replaceMatchedCards()
+                numberOfMatches += 1
             } else {
                 resetSelections()
             }
@@ -110,7 +120,7 @@ struct SetGame {
             cardsOnTable[chosenCardIndex].isSelected.toggle()
             
             if selectedCards.count == 3 {
-                matchCards()
+                matchSelectedCards()
             }
         }
     }
@@ -125,5 +135,21 @@ struct SetGame {
     
     mutating func restartGame() {
         startNewGame()
+    }
+    
+    func getAMatchingSet() -> TernaryCollection<String>? {
+        for index in cardsOnTable.indices {
+            if index + 2 < cardsOnTable.count {
+                for index2 in index + 1..<cardsOnTable.count {
+                    for index3 in index + 2..<cardsOnTable.count {
+                        if matchCards([cardsOnTable[index], cardsOnTable[index2], cardsOnTable[index3]]) {
+                            return TernaryCollection(cardsOnTable[index].id, cardsOnTable[index2].id, cardsOnTable[index3].id)
+                        }
+                    }
+                }
+            }
+        }
+        
+        return nil
     }
 }

@@ -14,6 +14,8 @@ struct ShapeSetCardView: View {
     
     @Environment(\.colorScheme) var colorScheme
     let card: SetCard
+    var hinted = false
+    
     private var shape: AnyShape {
         CardShape(rawValue: card.shape)!.getShape()
     }
@@ -23,17 +25,18 @@ struct ShapeSetCardView: View {
     private var color: Color {
         CardColor(rawValue: card.color)?.getColor() ?? .primary
     }
+    
+    private var cardColorOpacity: Double { colorScheme == .light ? 0.2 : 0.5 }
     private var cardColor: Color {
         var cardColor = colorScheme == .light ? Color.white : .white.opacity(0.9)
-        let opacity = colorScheme == .light ? 0.2 : 0.5
         
         if card.isSelected {
-            cardColor = .blue.opacity(opacity)
+            cardColor = .blue.opacity(cardColorOpacity)
             
             if card.isValidMatch == true {
-                cardColor = .green.opacity(opacity)
+                cardColor = .green.opacity(cardColorOpacity)
             } else if card.isValidMatch == false {
-                cardColor = .red.opacity(opacity)
+                cardColor = .red.opacity(cardColorOpacity)
             }
         }
         
@@ -56,19 +59,16 @@ struct ShapeSetCardView: View {
         return cardBorderColor
     }
     
-    init(_ card: SetCard) {
-        self.card = card
-    }
     
     var body: some View {
         let cardRectangle = RoundedRectangle(cornerRadius: Constants.cardCornerRadius)
         
         ZStack {
             cardRectangle
-                .strokeBorder(cardBorderColor, lineWidth: Constants.cardBorderWidth)
+                .strokeBorder(getColor(cardBorderColor), lineWidth: Constants.cardBorderWidth)
                 .background(
                     cardRectangle
-                        .fill(cardColor)
+                        .fill(getColor(cardColor))
                 )
             
             VStack {
@@ -80,6 +80,14 @@ struct ShapeSetCardView: View {
             .padding(Constants.innerCardPadding)
         }
         .padding(Constants.outerCardPadding)
+    }
+    
+    private func getColor(_ color: Color) -> Color {
+        if hinted && !card.isSelected {
+            return .orange.opacity(cardColorOpacity)
+        } else {
+            return color
+        }
     }
     
     private struct Constants {
@@ -98,9 +106,11 @@ struct ShapeSetCardView_Previews: PreviewProvider {
         let card3 = SetCard(numberOfSymbols: 3, shape: 2, shading: 2, color: 2)
         
         Group {
-            ShapeSetCardView(card1)
-            ShapeSetCardView(card2)
-            ShapeSetCardView(card3)
+            ShapeSetCardView(card: card1)
+            ShapeSetCardView(card: card2)
+            ShapeSetCardView(card: card3)
+            ShapeSetCardView(card: card1)
+                .preferredColorScheme(.dark)
         }
         .previewLayout(.fixed(width: 200, height: 300))
     }

@@ -9,11 +9,32 @@ import SwiftUI
 
 struct ShapeSetGameView: View {
     @ObservedObject var game: ShapesSetGame
+    @State private var hintedCards: TernaryCollection<String>?
     
     var body: some View {
         VStack {
+            HStack {
+                Button {
+                    hintedCards = game.getAMatchingSet()
+                } label: {
+                    HStack(spacing: 4) {
+                        Image(systemName: "eye.circle.fill")
+                            .symbolRenderingMode(.multicolor)
+                            .foregroundStyle(.gray)
+                            .font(.title2)
+                        
+                        Text("Show matching set")
+                    }
+                }
+                
+                Spacer()
+                Text("Matches: \(game.numberOfMatches)")
+            }
+            .font(.headline)
+            .padding(8)
+            
             AspectVGrid(items: game.cardsOnTable, minimumWidth: 65, aspectRatio: 2/3) { card in
-                ShapeSetCardView(card)
+                ShapeSetCardView(card: card, hinted: hintedCards?.elements.contains(card.id) ?? false)
                     .onTapGesture {
                         game.choose(card)
                     }

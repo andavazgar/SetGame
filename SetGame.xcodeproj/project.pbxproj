@@ -15,6 +15,8 @@
 		412B500F27C957CC002D6025 /* SetCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 412B500E27C957CC002D6025 /* SetCard.swift */; };
 		412B501327C95E5A002D6025 /* Diamond.swift in Sources */ = {isa = PBXBuildFile; fileRef = 412B501227C95E5A002D6025 /* Diamond.swift */; };
 		412B501527C96078002D6025 /* Squiggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 412B501427C96078002D6025 /* Squiggle.swift */; };
+		414FE8F627D2DE53006A5048 /* StripedFill.swift in Sources */ = {isa = PBXBuildFile; fileRef = 414FE8F527D2DE53006A5048 /* StripedFill.swift */; };
+		417B541B27D52C0D00F5D025 /* TernaryCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 417B541A27D52C0D00F5D025 /* TernaryCollection.swift */; };
 		41A8DE9027CDE21B00AE104C /* ShapesSetGame.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41A8DE8F27CDE21B00AE104C /* ShapesSetGame.swift */; };
 		41A8DE9427CDFDFA00AE104C /* AspectVGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41A8DE9327CDFDFA00AE104C /* AspectVGrid.swift */; };
 		41AD1AC727CE92D1005BD35A /* ShapeSetCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41AD1AC627CE92D1005BD35A /* ShapeSetCardView.swift */; };
@@ -31,6 +33,8 @@
 		412B500E27C957CC002D6025 /* SetCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetCard.swift; sourceTree = "<group>"; };
 		412B501227C95E5A002D6025 /* Diamond.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Diamond.swift; sourceTree = "<group>"; };
 		412B501427C96078002D6025 /* Squiggle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Squiggle.swift; sourceTree = "<group>"; };
+		414FE8F527D2DE53006A5048 /* StripedFill.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StripedFill.swift; sourceTree = "<group>"; };
+		417B541A27D52C0D00F5D025 /* TernaryCollection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TernaryCollection.swift; sourceTree = "<group>"; };
 		41A8DE8F27CDE21B00AE104C /* ShapesSetGame.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShapesSetGame.swift; sourceTree = "<group>"; };
 		41A8DE9327CDFDFA00AE104C /* AspectVGrid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AspectVGrid.swift; sourceTree = "<group>"; };
 		41AD1AC627CE92D1005BD35A /* ShapeSetCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShapeSetCardView.swift; sourceTree = "<group>"; };
@@ -101,6 +105,7 @@
 			children = (
 				412B500E27C957CC002D6025 /* SetCard.swift */,
 				412B500C27C956D9002D6025 /* SetGame.swift */,
+				417B541A27D52C0D00F5D025 /* TernaryCollection.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -119,6 +124,7 @@
 				41AD1AC827CEC934005BD35A /* AnyShape.swift */,
 				412B501227C95E5A002D6025 /* Diamond.swift */,
 				412B501427C96078002D6025 /* Squiggle.swift */,
+				414FE8F527D2DE53006A5048 /* StripedFill.swift */,
 			);
 			path = Shapes;
 			sourceTree = "<group>";
@@ -194,7 +200,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				412B501527C96078002D6025 /* Squiggle.swift in Sources */,
+				414FE8F627D2DE53006A5048 /* StripedFill.swift in Sources */,
 				412B500127C9562F002D6025 /* ShapeSetGameView.swift in Sources */,
+				417B541B27D52C0D00F5D025 /* TernaryCollection.swift in Sources */,
 				412B500D27C956D9002D6025 /* SetGame.swift in Sources */,
 				41A8DE9027CDE21B00AE104C /* ShapesSetGame.swift in Sources */,
 				412B500F27C957CC002D6025 /* SetCard.swift in Sources */,

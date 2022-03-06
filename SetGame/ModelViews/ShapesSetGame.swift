@@ -10,6 +10,7 @@ import SwiftUI
 class ShapesSetGame: ObservableObject {
     @Published private var gameModel = SetGame()
     var cardsOnTable: [SetCard] { gameModel.cardsOnTable }
+    var numberOfMatches: Int { gameModel.numberOfMatches }
     var deckIsEmpty: Bool { gameModel.deckIsEmpty }
     
     
@@ -24,6 +25,10 @@ class ShapesSetGame: ObservableObject {
     
     func restartGame() {
         gameModel.restartGame()
+    }
+    
+    func getAMatchingSet() -> TernaryCollection<String>? {
+        gameModel.getAMatchingSet()
     }
     
     // MARK: - Shapes, shading and color interpretation
@@ -53,7 +58,7 @@ class ShapesSetGame: ObservableObject {
                 shape.fill(color)
             case .striped:
                 shape.stroke(color, lineWidth: 2)
-                    .background(shape.fill(color.opacity(0.4)))
+                    .background(StripedFill().stroke(color).clipShape(shape))
             case .open:
                 shape.stroke(color, lineWidth: 2)
             }
