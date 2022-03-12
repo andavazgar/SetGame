@@ -7,14 +7,21 @@
 
 import SwiftUI
 
-struct ShapeSetCardView: View {
+struct ShapeSetCardView: View, Animatable {
     typealias CardShape = ShapesSetGame.CardShape
     typealias CardShading = ShapesSetGame.CardShading
     typealias CardColor = ShapesSetGame.CardColor
     
-    @Environment(\.colorScheme) var colorScheme
+    // MARK: - Properties
+    @Environment(\.colorScheme) private var colorScheme
     let card: SetCard
-    var hinted = false
+    var rotation = 0.0  // in degrees
+    var isHinted = false
+    
+    var animatableData: Double {
+        get { rotation }
+        set { rotation = newValue }
+    }
     
     private var shape: AnyShape {
         CardShape(rawValue: card.shape)!.getShape()
@@ -59,17 +66,26 @@ struct ShapeSetCardView: View {
         return cardBorderColor
     }
     
+    private let cardRectangle = RoundedRectangle(cornerRadius: Constants.cardCornerRadius)
     
+    // MARK: - Body View
     var body: some View {
-        let cardRectangle = RoundedRectangle(cornerRadius: Constants.cardCornerRadius)
-        
+        ZStack {
+            if rotation < 90 {
+                faceUpCard
+            } else {
+                backOfCard
+            }
+        }
+        .rotation3DEffect(.degrees(rotation), axis: (0, 1, 0))
+    }
+    
+    // MARK: - Subviews
+    private var faceUpCard: some View {
         ZStack {
             cardRectangle
                 .strokeBorder(getColor(cardBorderColor), lineWidth: Constants.cardBorderWidth)
-                .background(
-                    cardRectangle
-                        .fill(getColor(cardColor))
-                )
+                .background(cardRectangle.fill(getColor(cardColor)))
             
             VStack {
                 ForEach(0..<card.numberOfSymbols, id:\.self) { _ in
@@ -82,15 +98,67 @@ struct ShapeSetCardView: View {
         .padding(Constants.outerCardPadding)
     }
     
+    private var backOfCard: some View {
+        GeometryReader { geometry in
+            let innerPadding = geometry.size.width * Constants.backOfCard.innerPaddingPercentage
+            
+            ZStack {
+                cardRectangle
+                    .strokeBorder(cardBorderColor, lineWidth: Constants.cardBorderWidth)
+                    .background(cardRectangle.fill(cardColor))
+                
+                // Background color behind pattern
+                cardRectangle
+                    .fill(Constants.backOfCard.color.opacity(Constants.backOfCard.patternBackgroundColorOpacity))
+                    .padding(innerPadding)
+                
+                // Pattern
+                Group {
+                    StripedFill(step: Constants.backOfCard.patternLinesStep, lineWidth: Constants.backOfCard.patternLinesWidth)
+                        .rotation(.degrees(Constants.backOfCard.rotation))
+                    
+                    StripedFill(step: Constants.backOfCard.patternLinesStep, lineWidth: Constants.backOfCard.patternLinesWidth)
+                        .rotation(.degrees(-Constants.backOfCard.rotation))
+                }
+                .scaleEffect(Constants.backOfCard.patternScaleFactor)
+                .cornerRadius(Constants.cardCornerRadius)
+                .padding(innerPadding)
+                
+                // Border around pattern
+                cardRectangle
+                    .strokeBorder(.red, lineWidth: Constants.backOfCard.patternBorderWidth)
+                    .padding(innerPadding)
+            }
+        }
+        .foregroundColor(.red)
+        .padding(Constants.outerCardPadding)
+    }
+    
+    init(_ card: SetCard, flipped: Bool = false, isHinted: Bool = false) {
+        self.card = card
+        self.rotation = flipped ? 0 : 180
+        self.isHinted = isHinted
+    }
+    
     private func getColor(_ color: Color) -> Color {
-        if hinted && !card.isSelected {
-            return .orange.opacity(cardColorOpacity)
+        if isHinted && !card.isSelected {
+            return .orange.opacity(0.3)
         } else {
             return color
         }
     }
     
     private struct Constants {
+        static let backOfCard = (
+            color: Color.red,
+            innerPaddingPercentage: 0.15,
+            patternBackgroundColorOpacity: 0.3,
+            patternBorderWidth: cardBorderWidth * 1.5,
+            patternLinesStep: 0.1,
+            patternLinesWidth: 2.0,
+            patternScaleFactor: 1.5,
+            rotation: 45.0
+        )
         static let cardCornerRadius: CGFloat = 10
         static let cardBorderWidth: CGFloat = 2
         static let innerCardPadding: CGFloat = 20
@@ -106,11 +174,10 @@ struct ShapeSetCardView_Previews: PreviewProvider {
         let card3 = SetCard(numberOfSymbols: 3, shape: 2, shading: 2, color: 2)
         
         Group {
-            ShapeSetCardView(card: card1)
-            ShapeSetCardView(card: card2)
-            ShapeSetCardView(card: card3)
-            ShapeSetCardView(card: card1)
-                .preferredColorScheme(.dark)
+            ShapeSetCardView(card1, flipped: true)
+            ShapeSetCardView(card2, flipped: true)
+            ShapeSetCardView(card3, flipped: true)
+            ShapeSetCardView(card1)
         }
         .previewLayout(.fixed(width: 200, height: 300))
     }

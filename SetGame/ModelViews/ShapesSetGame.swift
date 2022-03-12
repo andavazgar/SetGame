@@ -9,7 +9,10 @@ import SwiftUI
 
 class ShapesSetGame: ObservableObject {
     @Published private var gameModel = SetGame()
+    var deck: [SetCard] { gameModel.deck }
     var cardsOnTable: [SetCard] { gameModel.cardsOnTable }
+    var numberOfCardsDealt: Int { gameModel.numberOfCardsDealt }
+    var initialNumberOfCards: Int { gameModel.initialNumberOfCards }
     var numberOfMatches: Int { gameModel.numberOfMatches }
     var deckIsEmpty: Bool { gameModel.deckIsEmpty }
     
@@ -17,6 +20,10 @@ class ShapesSetGame: ObservableObject {
     // MARK: - Intents
     func choose(_ card: SetCard) {
         gameModel.choose(card)
+    }
+    
+    func dealCard(_ card: SetCard) {
+        gameModel.dealCard(card)
     }
     
     func deal3cards() {

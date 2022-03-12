@@ -8,14 +8,14 @@
 import Foundation
 
 struct SetGame {
-    private var deck = [SetCard]()
+    private(set) var deck = [SetCard]()
     private(set) var cardsOnTable = [SetCard]()
     private(set) var numberOfMatches = 0
-    private var numberOfCardsDrawn = 0
-    private let initialNumberOfCards = 12
+    private(set) var numberOfCardsDealt = 0
     private var selectedCards: [SetCard] { cardsOnTable.filter { $0.isSelected } }
     private var matchedCards: [SetCard] { cardsOnTable.filter { $0.isValidMatch == true } }
-    var deckIsEmpty: Bool { numberOfCardsDrawn >= deck.count }
+    let initialNumberOfCards = 12
+    var deckIsEmpty: Bool { numberOfCardsDealt >= deck.count }
     
     init() {
         for numOfSymbols in 1...3 {
@@ -34,7 +34,7 @@ struct SetGame {
     private mutating func startNewGame() {
         deck.shuffle()
         cardsOnTable = Array(deck.prefix(initialNumberOfCards))
-        numberOfCardsDrawn = initialNumberOfCards
+        numberOfCardsDealt = initialNumberOfCards
     }
     
     private func matchCards(_ setOfCards: [SetCard]) -> Bool {
@@ -76,19 +76,17 @@ struct SetGame {
         
         for index in cardsOnTable.indices.reversed() {
             if matchedCards.contains(cardsOnTable[index]) {
-                if let newCard = newCards?.removeFirst(), cardsOnTable.count == initialNumberOfCards {
+                if let newCard = newCards?.removeFirst() {
                     cardsOnTable[index] = newCard
-                } else {
-                    cardsOnTable.remove(at: index)
                 }
             }
         }
     }
     
     private mutating func draw3CardsFromDeck() -> [SetCard]? {
-        if numberOfCardsDrawn < deck.count {
-            let newCards = deck[numberOfCardsDrawn..<numberOfCardsDrawn + 3]
-            numberOfCardsDrawn += 3
+        if numberOfCardsDealt < deck.count {
+            let newCards = deck[numberOfCardsDealt..<numberOfCardsDealt + 3]
+            numberOfCardsDealt += 3
             
             return Array(newCards)
         }
@@ -109,7 +107,11 @@ struct SetGame {
     mutating func choose(_ card: SetCard) {
         if selectedCards.count == 3 {
             if selectedCards[0].isValidMatch == true {
-                replaceMatchedCards()
+                // Discard selected cards
+                for index in selectedCards.indices {
+                    deck.remove(at: index)
+                }
+                
                 numberOfMatches += 1
             } else {
                 resetSelections()
@@ -123,6 +125,11 @@ struct SetGame {
                 matchSelectedCards()
             }
         }
+    }
+    
+    mutating func dealCard(_ card: SetCard) {
+        cardsOnTable.append(card)
+        numberOfCardsDealt += 1
     }
     
     mutating func deal3cards() {
