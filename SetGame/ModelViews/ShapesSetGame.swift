@@ -9,11 +9,15 @@ import SwiftUI
 
 class ShapesSetGame: ObservableObject {
     @Published private var gameModel = SetGame()
+    
     var deck: [SetCard] { gameModel.deck }
     var cardsOnTable: [SetCard] { gameModel.cardsOnTable }
+    var discardPile: [SetCard] { gameModel.discardPile }
+    var numberOfMatches: Int { gameModel.numberOfMatches }
     var numberOfCardsDealt: Int { gameModel.numberOfCardsDealt }
     var initialNumberOfCards: Int { gameModel.initialNumberOfCards }
-    var numberOfMatches: Int { gameModel.numberOfMatches }
+    var selectedCards: [SetCard] { gameModel.selectedCards }
+    var matchedCards: [SetCard] { gameModel.matchedCards }
     var deckIsEmpty: Bool { gameModel.deckIsEmpty }
     
     
@@ -22,12 +26,16 @@ class ShapesSetGame: ObservableObject {
         gameModel.choose(card)
     }
     
-    func dealCard(_ card: SetCard) {
-        gameModel.dealCard(card)
+    func addToDiscardPile(_ cards: [SetCard]) {
+        gameModel.addToDiscardPile(cards)
     }
     
-    func deal3cards() {
-        gameModel.deal3cards()
+    func discardMatchedCards() {
+        gameModel.discardMatchedCards()
+    }
+    
+    func draw3CardsFromDeck() {
+        gameModel.draw3CardsFromDeck()
     }
     
     func restartGame() {

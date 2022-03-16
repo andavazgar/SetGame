@@ -10,11 +10,12 @@ import Foundation
 struct SetGame {
     private(set) var deck = [SetCard]()
     private(set) var cardsOnTable = [SetCard]()
+    private(set) var discardPile = [SetCard]()
     private(set) var numberOfMatches = 0
     private(set) var numberOfCardsDealt = 0
-    private var selectedCards: [SetCard] { cardsOnTable.filter { $0.isSelected } }
-    private var matchedCards: [SetCard] { cardsOnTable.filter { $0.isValidMatch == true } }
     let initialNumberOfCards = 12
+    var selectedCards: [SetCard] { cardsOnTable.filter { $0.isSelected } }
+    var matchedCards: [SetCard] { cardsOnTable.filter { $0.isValidMatch == true } }
     var deckIsEmpty: Bool { numberOfCardsDealt >= deck.count }
     
     init() {
@@ -70,30 +71,6 @@ struct SetGame {
         }
     }
     
-    private mutating func replaceMatchedCards() {
-        let matchedCards = matchedCards
-        var newCards = draw3CardsFromDeck()
-        
-        for index in cardsOnTable.indices.reversed() {
-            if matchedCards.contains(cardsOnTable[index]) {
-                if let newCard = newCards?.removeFirst() {
-                    cardsOnTable[index] = newCard
-                }
-            }
-        }
-    }
-    
-    private mutating func draw3CardsFromDeck() -> [SetCard]? {
-        if numberOfCardsDealt < deck.count {
-            let newCards = deck[numberOfCardsDealt..<numberOfCardsDealt + 3]
-            numberOfCardsDealt += 3
-            
-            return Array(newCards)
-        }
-        
-        return nil
-    }
-    
     private mutating func resetSelections() {
         for index in cardsOnTable.indices {
             cardsOnTable[index].isSelected = false
@@ -101,18 +78,23 @@ struct SetGame {
         }
     }
     
+    private func resetStatus(ofCards cards: [SetCard]) -> [SetCard] {
+        let cleanCards = cards.map { card -> SetCard in
+            var card = card
+            card.isSelected = false
+            card.isValidMatch = nil
+            return card
+        }
+        
+        return cleanCards
+    }
+    
     
     // MARK: - Intents
-    
     mutating func choose(_ card: SetCard) {
         if selectedCards.count == 3 {
             if selectedCards[0].isValidMatch == true {
-                // Discard selected cards
-                for index in selectedCards.indices {
-                    deck.remove(at: index)
-                }
-                
-                numberOfMatches += 1
+                discardMatchedCards()
             } else {
                 resetSelections()
             }
@@ -127,15 +109,31 @@ struct SetGame {
         }
     }
     
-    mutating func dealCard(_ card: SetCard) {
-        cardsOnTable.append(card)
-        numberOfCardsDealt += 1
+    mutating func discardMatchedCards() {
+        guard matchedCards.count == 3 else { return }
+        
+        // Remove the discarded cards from the table
+        cardsOnTable = cardsOnTable.filter { !matchedCards.contains($0) }
+        numberOfMatches += 1
     }
     
-    mutating func deal3cards() {
-        if matchedCards.count > 0 {
-            replaceMatchedCards()
-        } else if let newCards = draw3CardsFromDeck() {
+    mutating func addToDiscardPile(_ cards: [SetCard]) {
+        discardPile.append(contentsOf: resetStatus(ofCards: cards))
+    }
+    
+    mutating func draw3CardsFromDeck() {
+        guard numberOfCardsDealt + 3 < deck.count else { return }
+        
+        var newCards = deck[numberOfCardsDealt..<numberOfCardsDealt + 3]
+        numberOfCardsDealt += 3
+        
+        if matchedCards.count == 3 {
+            for index in cardsOnTable.indices {
+                if matchedCards.contains(cardsOnTable[index]) {
+                    cardsOnTable[index] = newCards.removeFirst()
+                }
+            }
+        } else {
             cardsOnTable.append(contentsOf: newCards)
         }
     }

@@ -11,26 +11,40 @@ struct AspectVGrid<Item: Identifiable, ItemView: View>: View {
     let items: [Item]
     let minimumWidth: CGFloat
     let aspectRatio: CGFloat
+    let bottomPadding: CGFloat
     let content: (Item) -> ItemView
     
     
-    init(items: [Item], minimumWidth: CGFloat, aspectRatio: CGFloat, @ViewBuilder content: @escaping (Item) -> ItemView) {
+    init(items: [Item], minimumWidth: CGFloat = .infinity, aspectRatio: CGFloat = 1, bottomPadding: CGFloat = 0, @ViewBuilder content: @escaping (Item) -> ItemView) {
         self.items = items
         self.minimumWidth = minimumWidth
         self.aspectRatio = aspectRatio
+        self.bottomPadding = bottomPadding
         self.content = content
     }
     
     var body: some View {
         GeometryReader { geometry in
             ScrollView(showsIndicators: false) {
-                let width: CGFloat = max(minimumWidth, widthThatFits(itemCount: items.count, in: geometry.size, itemAspectRatio: aspectRatio))
-                
-                LazyVGrid(columns: [adaptiveGridItem(width: width)], spacing: 0) {
-                    ForEach(items) { item in
-                        content(item)
-                            .aspectRatio(aspectRatio, contentMode: .fit)
+                ScrollViewReader { scrollViewReader in
+                    let width: CGFloat = max(minimumWidth, widthThatFits(itemCount: items.count, in: geometry.size, itemAspectRatio: aspectRatio))
+                    
+                    LazyVGrid(columns: [adaptiveGridItem(width: width)], spacing: 0) {
+                        ForEach(items) { item in
+                            content(item)
+                                .aspectRatio(aspectRatio, contentMode: .fit)
+                        }
+                        .onChange(of: items.count) { newValue in
+                            if newValue > items.count {
+                                // New items are being added, scroll to the bottom
+                                withAnimation {
+                                    scrollViewReader.scrollTo("endOfAspectVGrid")
+                                }
+                            }
+                        }
                     }
+                    .padding(.bottom, bottomPadding)
+                    Color.clear.id("endOfAspectVGrid")
                 }
             }
         }

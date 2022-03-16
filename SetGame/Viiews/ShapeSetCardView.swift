@@ -35,7 +35,7 @@ struct ShapeSetCardView: View, Animatable {
     
     private var cardColorOpacity: Double { colorScheme == .light ? 0.2 : 0.5 }
     private var cardColor: Color {
-        var cardColor = colorScheme == .light ? Color.white : .white.opacity(0.9)
+        var cardColor = Color.white
         
         if card.isSelected {
             cardColor = .blue.opacity(cardColorOpacity)
@@ -51,7 +51,7 @@ struct ShapeSetCardView: View, Animatable {
     }
     
     private var cardBorderColor: Color {
-        var cardBorderColor = Color.primary
+        var cardBorderColor = Color.black
         
         if card.isSelected {
             cardBorderColor = .blue
@@ -134,6 +134,7 @@ struct ShapeSetCardView: View, Animatable {
         .padding(Constants.outerCardPadding)
     }
     
+    // MARK: - Methods
     init(_ card: SetCard, flipped: Bool = false, isHinted: Bool = false) {
         self.card = card
         self.rotation = flipped ? 0 : 180
@@ -148,6 +149,7 @@ struct ShapeSetCardView: View, Animatable {
         }
     }
     
+    // MARK: - Constants
     private struct Constants {
         static let backOfCard = (
             color: Color.red,
