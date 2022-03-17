@@ -73,6 +73,7 @@ struct ShapeSetGameView: View {
                                 withAnimation(.linear(duration: Constants.durationToRearrangeCards)) {
                                     game.discardMatchedCards()
                                     cardsToDiscard.removeAll(keepingCapacity: true)
+                                    game.choose(card)
                                 }
                             }
                         } else {

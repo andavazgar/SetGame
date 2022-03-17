@@ -14,6 +14,8 @@ struct ShapeSetCardView: View, Animatable {
     
     // MARK: - Properties
     @Environment(\.colorScheme) private var colorScheme
+    @State private var xOffset = 0.0
+    @State private var scale = 1.0
     let card: SetCard
     var rotation = 0.0  // in degrees
     var isHinted = false
@@ -90,10 +92,15 @@ struct ShapeSetCardView: View, Animatable {
             VStack {
                 ForEach(0..<card.numberOfSymbols, id:\.self) { _ in
                     shadedShape
-                        .aspectRatio(Constants.symbolsAspectRatio, contentMode: .fit)
+                        .aspectRatio(Constants.frontOfCard.symbolsAspectRatio, contentMode: .fit)
                 }
             }
-            .padding(Constants.innerCardPadding)
+            .padding(Constants.frontOfCard.innerCardPadding)
+            .scaleEffect(scale)
+            .offset(x: xOffset, y: 0)
+            .onChange(of: card.isValidMatch) { newValue in
+                animateMatchStatus(changedTo: newValue)
+            }
         }
         .padding(Constants.outerCardPadding)
     }
@@ -149,6 +156,29 @@ struct ShapeSetCardView: View, Animatable {
         }
     }
     
+    private func animateMatchStatus(changedTo newMatchStatus: Bool?) {
+        if newMatchStatus == true {
+            let durationOfAnimation = Constants.frontOfCard.durationOfValidMatchAnimation
+            withAnimation(.linear(duration: durationOfAnimation).repeatCount(3)) {
+                scale = 0.8
+            }
+            withAnimation(.linear(duration: durationOfAnimation).delay(durationOfAnimation * 3)) {
+                scale = 1
+            }
+        } else if newMatchStatus == false {
+            let durationOfAnimation = Constants.frontOfCard.durationOfInvalidMatchAnimation
+            withAnimation(.linear(duration: durationOfAnimation)) {
+                xOffset = -5
+            }
+            withAnimation(.linear(duration: durationOfAnimation * 2).repeatCount(4).delay(durationOfAnimation)) {
+                xOffset = 5
+            }
+            withAnimation(.linear(duration: durationOfAnimation).delay(durationOfAnimation * 8)) {
+                xOffset = 0
+            }
+        }
+    }
+    
     // MARK: - Constants
     private struct Constants {
         static let backOfCard = (
@@ -161,11 +191,15 @@ struct ShapeSetCardView: View, Animatable {
             patternScaleFactor: 1.5,
             rotation: 45.0
         )
+        static let frontOfCard = (
+            durationOfValidMatchAnimation: 0.25,
+            durationOfInvalidMatchAnimation: 0.05,
+            innerCardPadding: 20.0,
+            symbolsAspectRatio: CGSize(width: 2, height: 1)
+        )
         static let cardCornerRadius: CGFloat = 10
         static let cardBorderWidth: CGFloat = 2
-        static let innerCardPadding: CGFloat = 20
         static let outerCardPadding: CGFloat = 4
-        static let symbolsAspectRatio: CGFloat = 2/1
     }
 }
 
