@@ -1,8 +1,8 @@
 # SetGame
-Assignments 3 & 4 for the course Stanford CS193p (Spring 2021)
+Assignments 3 & 4 for [Stanford University's course CS193p](https://cs193p.sites.stanford.edu) (Developing Applications for iOS) of Spring 2021.
 
 
-## Assignmet Instructions
+## Assignment Instructions
 - [Assignment 3 (PDF)](https://cs193p.sites.stanford.edu/sites/g/files/sbiybj16636/files/media/file/assignment_3_0.pdf)
 - [Assignment 4 (PDF)](https://cs193p.sites.stanford.edu/sites/g/files/sbiybj16636/files/media/file/assignment_4_0.pdf)
 
@@ -22,7 +22,7 @@ Assignments 3 & 4 for the course Stanford CS193p (Spring 2021)
 - MVVM Architecture
 
 
-## Topics Practiced
+## Topics Covered
 - Access Control
 - Custom Shapes (using Path)
 - GeometryReader
