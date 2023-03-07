@@ -1,5 +1,6 @@
 # SetGame
-Assignments 3 & 4 for [Stanford University's course CS193p](https://cs193p.sites.stanford.edu) (Developing Applications for iOS) of Spring 2021.
+Assignments 3 & 4 for [Stanford University's course CS193p](https://cs193p.sites.stanford.edu) (Developing Applications for iOS) of Spring 2021.\
+The goal of this assignment is to understand the animation mechanisms (Implicit, Explicit and Transition).
 
 
 ## Assignment Instructions
@@ -24,7 +25,7 @@ Assignments 3 & 4 for [Stanford University's course CS193p](https://cs193p.sites
 
 ## Topics Covered
 - Access Control
-- Custom Shapes (using Path)
+- Custom Shapes using Path (Diamond, Squiggle and StripedFill)
 - GeometryReader
 - Enums
 - Closures
@@ -33,3 +34,7 @@ Assignments 3 & 4 for [Stanford University's course CS193p](https://cs193p.sites
 
 ## Screenshots
 ![Thumbnails](Demo/Thumbnails.png)
+
+
+## Preview
+<img src="Demo/Preview.gif" alt="App Preview" width="50%">
